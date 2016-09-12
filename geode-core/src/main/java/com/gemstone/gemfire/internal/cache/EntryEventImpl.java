@@ -770,7 +770,11 @@ public class EntryEventImpl
    * Note: to prevent the heap copy use getRawNewValue instead
    */
   public final Object getRawNewValueAsHeapObject() {
-    return OffHeapHelper.getHeapForm(OffHeapHelper.copyIfNeeded(basicGetNewValue()));
+    Object result = basicGetNewValue();
+    if (this.isOffHeapPossible()) {
+      result = OffHeapHelper.copyIfNeeded(result);
+    }
+    return result;
   }
   
   /**
@@ -791,32 +795,28 @@ public class EntryEventImpl
   @Released(ENTRY_EVENT_NEW_VALUE)
   protected void basicSetNewValue(@Retained(ENTRY_EVENT_NEW_VALUE) Object v) {
     if (v == this.newValue) return;
-    if (this.offHeapOk) {
-      OffHeapHelper.releaseAndTrackOwner(this.newValue, this);
-    }
-    if (isOffHeapReference(v)) {
-      ReferenceCountHelper.setReferenceCountOwner(this);
-      if (!((StoredObject) v).retain()) {
-        ReferenceCountHelper.setReferenceCountOwner(null);
-        this.newValue = null;
-        return;
+    if (isOffHeapPossible()) {
+      if (this.offHeapOk) {
+        OffHeapHelper.releaseAndTrackOwner(this.newValue, this);
       }
-      ReferenceCountHelper.setReferenceCountOwner(null);
+      if (isOffHeapReference(v)) {
+        ReferenceCountHelper.setReferenceCountOwner(this);
+        if (!((StoredObject) v).retain()) {
+          ReferenceCountHelper.setReferenceCountOwner(null);
+          this.newValue = null;
+          return;
+        }
+        ReferenceCountHelper.setReferenceCountOwner(null);
+      }
     }
     this.newValue = v;
     this.cachedSerializedNewValue = null;
-  }
-  /**
-   * Returns true if this event has a reference to an off-heap new or old value.
-   */
-  public boolean hasOffHeapValue() {
-    return isOffHeapReference(this.newValue) || isOffHeapReference(this.oldValue);
   }
   
   @Unretained
   protected final Object basicGetNewValue() {
     Object result = this.newValue;
-    if (!this.offHeapOk && isOffHeapReference(result)) {
+    if (!this.offHeapOk && isOffHeapPossible() && isOffHeapReference(result)) {
       //this.region.getCache().getLogger().info("DEBUG new value already freed " + System.identityHashCode(result));
       throw new IllegalStateException("Attempt to access off heap value after the EntryEvent was released.");
     }
@@ -859,7 +859,7 @@ public class EntryEventImpl
   private void basicSetOldValue(@Unretained(ENTRY_EVENT_OLD_VALUE) Object v) {
     @Released final Object curOldValue = this.oldValue;
     if (v == curOldValue) return;
-    if (this.offHeapOk) {
+    if (this.offHeapOk && isOffHeapPossible()) {
       if (ReferenceCountHelper.trackReferenceCounts()) {
         OffHeapHelper.releaseAndTrackOwner(curOldValue, new OldValueOwner());
       } else {
@@ -874,7 +874,7 @@ public class EntryEventImpl
   private void retainAndSetOldValue(@Retained(ENTRY_EVENT_OLD_VALUE) Object v) {
     if (v == this.oldValue) return;
     
-    if (isOffHeapReference(v)) {
+    if (isOffHeapPossible() && isOffHeapReference(v)) {
       StoredObject so = (StoredObject) v;
       if (ReferenceCountHelper.trackReferenceCounts()) {
         ReferenceCountHelper.setReferenceCountOwner(new OldValueOwner());
@@ -898,7 +898,7 @@ public class EntryEventImpl
   private Object basicGetOldValue() {
     @Unretained(ENTRY_EVENT_OLD_VALUE)
     Object result = this.oldValue;
-    if (!this.offHeapOk && isOffHeapReference(result)) {
+    if (!this.offHeapOk && isOffHeapPossible() && isOffHeapReference(result)) {
       //this.region.getCache().getLogger().info("DEBUG old value already freed " + System.identityHashCode(result));
       throw new IllegalStateException("Attempt to access off heap value after the EntryEvent was released.");
     }
@@ -910,7 +910,11 @@ public class EntryEventImpl
    * To avoid the heap copy use getRawOldValue instead.
    */
   public final Object getRawOldValueAsHeapObject() {
-    return OffHeapHelper.getHeapForm(OffHeapHelper.copyIfNeeded(basicGetOldValue()));
+    Object result = basicGetOldValue();
+    if (isOffHeapPossible()) {
+      result = OffHeapHelper.copyIfNeeded(result);
+    }
+    return result;
   }
   /*
    * If the old value is off-heap return the StoredObject form (unretained OFF_HEAP_REFERENCE). 
@@ -927,7 +931,7 @@ public class EntryEventImpl
   @Unretained(ENTRY_EVENT_OLD_VALUE)
   public final Object getOldValueAsOffHeapDeserializedOrRaw() {
     Object result = basicGetOldValue();
-    if (result instanceof StoredObject) {
+    if (isOffHeapPossible() && result instanceof StoredObject) {
       result = ((StoredObject) result).getDeserializedForReading();
     }
     return AbstractRegion.handleNotAvailable(result); // fixes 49499
@@ -984,7 +988,7 @@ public class EntryEventImpl
    * @return the value returned from invoking the function
    */
   private <T,R> R callWithOffHeapLock(T value, Function<T, R> function) {
-    if (isOffHeapReference(value)) {
+    if (isOffHeapPossible() && isOffHeapReference(value)) {
       synchronized (this.offHeapLock) {
         if (!this.offHeapOk) {
           throw new IllegalStateException("Attempt to access off heap value after the EntryEvent was released.");
@@ -1290,7 +1294,7 @@ public class EntryEventImpl
   @Unretained(ENTRY_EVENT_NEW_VALUE)
   public final Object getNewValueAsOffHeapDeserializedOrRaw() {
     Object result = getRawNewValue();
-    if (result instanceof StoredObject) {
+    if (isOffHeapPossible() && result instanceof StoredObject) {
       result = ((StoredObject) result).getDeserializedForReading();
     }
     return AbstractRegion.handleNotAvailable(result); // fixes 49499
@@ -1314,7 +1318,10 @@ public class EntryEventImpl
     return convertToStoredObject(basicGetOldValue());
   }
 
-  private static StoredObject convertToStoredObject(final Object tmp) {
+  private StoredObject convertToStoredObject(final Object tmp) {
+    if (!isOffHeapPossible()) {
+      return null;
+    }
     if (!(tmp instanceof StoredObject)) {
       return null;
     }
@@ -1780,7 +1787,11 @@ public class EntryEventImpl
     if (this.op != Operation.LOCAL_INVALIDATE
         && this.op != Operation.LOCAL_DESTROY) {
       // fix for bug 34387
-      tx.setPendingValue(OffHeapHelper.copyIfNeeded(v));
+      Object pv = v;
+      if (isOffHeapPossible()) {
+        pv = OffHeapHelper.copyIfNeeded(v);
+      }
+      tx.setPendingValue(pv);
     }
     tx.setCallbackArgument(getCallbackArgument());
   }
@@ -1797,7 +1808,9 @@ public class EntryEventImpl
       try {
         return setOldValue(v);
       } finally {
-        OffHeapHelper.releaseWithNoTracking(v);
+        if (isOffHeapPossible()) {
+          OffHeapHelper.releaseWithNoTracking(v);
+        }
       }
     }
     catch (EntryNotFoundException ex) {
@@ -2557,7 +2570,7 @@ public class EntryEventImpl
     private final byte[] serializedValue;
     
     SerializedCacheValueImpl(EntryEventImpl event, Region r, RegionEntry re, @Unretained CachedDeserializable cd, byte[] serializedBytes) {
-      if (isOffHeapReference(cd)) {
+      if (event.isOffHeapPossible() && isOffHeapReference(cd)) {
         this.event = event;
       } else {
         this.event = null;
@@ -2748,6 +2761,9 @@ public class EntryEventImpl
   public void release() {
     // noop if already freed or values can not be off-heap
     if (!this.offHeapOk) return;
+    if (!isOffHeapPossible()) {
+      return;
+    }
     synchronized (this.offHeapLock) {
       // Note that this method does not set the old/new values to null but
       // leaves them set to the off-heap value so that future calls to getOld/NewValue
@@ -2771,6 +2787,18 @@ public class EntryEventImpl
     }
   }
   
+  /**
+   * Return true if it is possible that this EntryEvent has off-heap references.
+   */
+  private boolean isOffHeapPossible() {
+    LocalRegion lr = this.region;
+    if (lr != null) {
+      return lr.getAttributes().getOffHeap();
+    }
+    // if region field is null it is possible that we have off-heap values
+    return true;
+  }
+
   void testHookReleaseInProgress() {
     // unit test can mock or override this method
   }
@@ -2781,7 +2809,7 @@ public class EntryEventImpl
    */
   public void disallowOffHeapValues() {
     if (isOffHeapReference(this.newValue) || isOffHeapReference(this.oldValue)) {
-      throw new IllegalStateException("This event does not support off-heap values");
+      throw new IllegalStateException("This event already has off-heap values");
     }
     synchronized (this.offHeapLock) {
       this.offHeapOk = false;
@@ -2794,6 +2822,10 @@ public class EntryEventImpl
    */
   @Released({ENTRY_EVENT_NEW_VALUE, ENTRY_EVENT_OLD_VALUE})
   public void copyOffHeapToHeap() {
+    if (!isOffHeapPossible()) {
+      this.offHeapOk = false;
+      return;
+    }
     synchronized (this.offHeapLock) {
       Object ov = basicGetOldValue();
       if (isOffHeapReference(ov)) {
@@ -2819,6 +2851,9 @@ public class EntryEventImpl
   }
 
   public boolean isOldValueOffHeap() {
+    if (!isOffHeapPossible()) {
+      return false;
+    }
     return isOffHeapReference(this.oldValue);
   }
 }
