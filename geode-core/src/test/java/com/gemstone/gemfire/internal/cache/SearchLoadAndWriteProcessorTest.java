@@ -40,6 +40,8 @@ public class SearchLoadAndWriteProcessorTest {
     // setup
     SearchLoadAndWriteProcessor processor = SearchLoadAndWriteProcessor.getProcessor();
     LocalRegion lr = mock(LocalRegion.class);
+    when(lr.getAttributes()).thenReturn(lr);
+    when(lr.getOffHeap()).thenReturn(true);
     when(lr.getScope()).thenReturn(Scope.DISTRIBUTED_ACK);
     Object key = "key";
     StoredObject value = mock(StoredObject.class);
