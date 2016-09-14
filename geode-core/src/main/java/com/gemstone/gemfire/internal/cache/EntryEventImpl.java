@@ -771,7 +771,7 @@ public class EntryEventImpl
    */
   public final Object getRawNewValueAsHeapObject() {
     Object result = basicGetNewValue();
-    if (this.mayHaveOffHeapReferences()) {
+    if (mayHaveOffHeapReferences()) {
       result = OffHeapHelper.copyIfNeeded(result);
     }
     return result;
@@ -824,7 +824,7 @@ public class EntryEventImpl
   }
   
   private boolean isOffHeapReference(Object ref) {
-    return this.mayHaveOffHeapReferences() && StoredObject.hasReferenceCount(ref);
+    return mayHaveOffHeapReferences() && StoredObject.hasReferenceCount(ref);
   }
   
   private class OldValueOwner {
