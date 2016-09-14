@@ -38,4 +38,8 @@ public interface OffHeapRegionEntry extends RegionEntry, Releasable {
    * @return newAddr OFF_HEAP_ADDRESS
    */
   public boolean setAddress(long expectedAddr, long newAddr);
+  @Override
+  public default boolean isOffHeap() {
+    return true;
+  }
 }

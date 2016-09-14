@@ -170,4 +170,10 @@ public interface StoredObject extends Sendable, CachedDeserializable, Releasable
    */
   public StoredObject getStoredObjectWithoutHeapForm();
 
+  /**
+   * Return true if the given "o" is a StoredObject and has a reference count.
+   */
+  public static boolean hasReferenceCount(Object o) {
+    return (o instanceof StoredObject) && ((StoredObject)o).hasRefCount();
+  }
 }

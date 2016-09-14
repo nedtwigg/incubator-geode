@@ -48,7 +48,6 @@ public class EntryEventImplTest {
   public void verifyToStringOutputHasRegionName() {
     // mock a region object
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     String expectedRegionName = "ExpectedFullRegionPathName";
     String value = "value1";
     KeyInfo keyInfo = new KeyInfo(key, value, null);
@@ -69,7 +68,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportNewValueWithUnserializedStoredObject() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     when(region.getOffHeap()).thenReturn(true);
     StoredObject newValue = mock(StoredObject.class);
     byte[] newValueBytes = new byte[]{1,2,3};
@@ -85,7 +83,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportNewValueWithByteArray() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     byte[] newValue = new byte[]{1,2,3};
     NewValueImporter nvImporter = mock(NewValueImporter.class);
     EntryEventImpl e = createEntryEvent(region, newValue);
@@ -98,7 +95,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportNewValueWithStringIgnoresNewValueBytes() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     String newValue = "newValue";
     NewValueImporter nvImporter = mock(NewValueImporter.class);
     when(nvImporter.prefersNewSerialized()).thenReturn(true);
@@ -114,7 +110,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportNewValueWithByteArrayCachedDeserializable() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     CachedDeserializable newValue = mock(CachedDeserializable.class);
     byte[] newValueBytes = new byte[] {1,2,3};
     when(newValue.getValue()).thenReturn(newValueBytes);
@@ -129,7 +124,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportNewValueWithStringCachedDeserializable() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     CachedDeserializable newValue = mock(CachedDeserializable.class);
     Object newValueObj = "newValueObj";
     when(newValue.getValue()).thenReturn(newValueObj);
@@ -147,7 +141,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportNewValueWithStringCachedDeserializablePrefersNewValueBytes() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     CachedDeserializable newValue = mock(CachedDeserializable.class);
     Object newValueObj = "newValueObj";
     when(newValue.getValue()).thenReturn(newValueObj);
@@ -165,7 +158,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportNewValueWithStringCachedDeserializablePrefersCachedSerializedNewValue() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     CachedDeserializable newValue = mock(CachedDeserializable.class);
     Object newValueObj = "newValueObj";
     when(newValue.getValue()).thenReturn(newValueObj);
@@ -183,7 +175,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportNewValueWithSerializedStoredObjectAndImporterPrefersSerialized() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     when(region.getOffHeap()).thenReturn(true);
     StoredObject newValue = mock(StoredObject.class);
     when(newValue.isSerialized()).thenReturn(true);
@@ -201,7 +192,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportNewValueWithSerializedStoredObject() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     when(region.getOffHeap()).thenReturn(true);
     StoredObject newValue = mock(StoredObject.class);
     when(newValue.isSerialized()).thenReturn(true);
@@ -218,7 +208,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportNewValueWithSerializedStoredObjectAndUnretainedNewReferenceOk() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     when(region.getOffHeap()).thenReturn(true);
     StoredObject newValue = mock(StoredObject.class);
     when(newValue.isSerialized()).thenReturn(true);
@@ -236,7 +225,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportOldValueWithUnserializedStoredObject() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     when(region.getOffHeap()).thenReturn(true);
     StoredObject oldValue = mock(StoredObject.class);
     byte[] oldValueBytes = new byte[]{1,2,3};
@@ -253,7 +241,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportOldValueWithByteArray() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     byte[] oldValue = new byte[]{1,2,3};
     OldValueImporter ovImporter = mock(OldValueImporter.class);
     EntryEventImpl e = createEntryEvent(region, null);
@@ -267,7 +254,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportOldValueWithStringIgnoresOldValueBytes() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     String oldValue = "oldValue";
     OldValueImporter ovImporter = mock(OldValueImporter.class);
     when(ovImporter.prefersOldSerialized()).thenReturn(true);
@@ -284,7 +270,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportOldValuePrefersOldValueBytes() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     OldValueImporter ovImporter = mock(OldValueImporter.class);
     when(ovImporter.prefersOldSerialized()).thenReturn(true);
     EntryEventImpl e = createEntryEvent(region, null);
@@ -299,7 +284,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportOldValueWithCacheDeserializableByteArray() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     CachedDeserializable oldValue = mock(CachedDeserializable.class);
     byte[] oldValueBytes = new byte[]{1,2,3};
     when(oldValue.getValue()).thenReturn(oldValueBytes);
@@ -315,7 +299,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportOldValueWithCacheDeserializableString() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     CachedDeserializable oldValue = mock(CachedDeserializable.class);
     Object oldValueObj = "oldValueObj";
     when(oldValue.getValue()).thenReturn(oldValueObj);
@@ -331,7 +314,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportOldValueWithCacheDeserializableOk() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     CachedDeserializable oldValue = mock(CachedDeserializable.class);
     Object oldValueObj = "oldValueObj";
     when(oldValue.getValue()).thenReturn(oldValueObj);
@@ -348,7 +330,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportOldValueWithSerializedStoredObjectAndImporterPrefersSerialized() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     when(region.getOffHeap()).thenReturn(true);
     StoredObject oldValue = mock(StoredObject.class);
     when(oldValue.isSerialized()).thenReturn(true);
@@ -367,7 +348,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportOldValueWithSerializedStoredObject() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     when(region.getOffHeap()).thenReturn(true);
     StoredObject oldValue = mock(StoredObject.class);
     when(oldValue.isSerialized()).thenReturn(true);
@@ -385,7 +365,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExportOldValueWithSerializedStoredObjectAndUnretainedOldReferenceOk() {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     when(region.getOffHeap()).thenReturn(true);
     StoredObject oldValue = mock(StoredObject.class);
     when(oldValue.isSerialized()).thenReturn(true);
@@ -404,7 +383,6 @@ public class EntryEventImplTest {
   @Test
   public void verifyExternalReadMethodsBlockedByRelease() throws InterruptedException {
     LocalRegion region = mock(LocalRegion.class);
-    when(region.getAttributes()).thenReturn(region);
     when(region.getOffHeap()).thenReturn(true);
     StoredObject newValue = mock(StoredObject.class);
     when(newValue.hasRefCount()).thenReturn(true);
