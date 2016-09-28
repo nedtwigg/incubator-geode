@@ -351,9 +351,12 @@ public class ManagementAgent {
     if (this.config.getJmxManagerBindAddress().equals("")) {
       hostname = SocketCreator.getLocalHost().getHostName();
       bindAddr = null;
+      System.out.println("[jared]Not setting hostname..");
     } else {
       hostname = this.config.getJmxManagerBindAddress();
       bindAddr = InetAddress.getByName(hostname);
+      System.out.println("[jared]Setting hostname..");
+      System.setProperty("java.rmi.hostname", hostname);
     }
 
     final SocketCreator socketCreator = SocketCreatorFactory.getSocketCreatorForComponent(SecurableCommunicationChannel.JMX);

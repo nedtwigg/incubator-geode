@@ -37,6 +37,7 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.WaitCriterion;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.commons.io.FileUtils;
+import org.apache.geode.test.junit.categories.UnitTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -62,7 +63,7 @@ import static org.apache.geode.test.dunit.IgnoredException.addIgnoredException;
 import static org.apache.geode.test.dunit.LogWriterUtils.getLogWriter;
 import static org.apache.geode.test.dunit.Wait.waitForCriterion;
 
-@Category(DistributedTest.class)
+@Category(UnitTest.class)
 public class SharedConfigurationEndToEndDUnitTest extends CliCommandTestBase {
 
   private static final int TIMEOUT = 10000;
@@ -127,6 +128,7 @@ public class SharedConfigurationEndToEndDUnitTest extends CliCommandTestBase {
     verifyRegionCreateOnAllMembers(REGION2);
     verifyIndexCreationOnAllMembers(INDEX1);
     verifyAsyncEventQueueCreation();
+    assertEquals (jmxHost, System.getProperty("java.rmi.server.hostname"));
   }
 
   private Set<String> startServers(final HeadlessGfsh gfsh, final String locatorString, final int numServers, final String serverNamePrefix, final int startNum) throws ClassNotFoundException, IOException {
